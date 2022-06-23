@@ -97,9 +97,13 @@ module Sorcery
 
       # used when a user tries to access a page while logged out, is asked to login,
       # and we want to return him back to the page he originally wanted.
-      def redirect_back_or_to(url, flash_hash = {})
-        redirect_to(session[:return_to_url] || url, flash: flash_hash)
-        session[:return_to_url] = nil
+      def redirect_back_or_to(fallback_location, allow_other_host: _allow_other_host, **options)
+        if session[:return_to_url]
+          redirect_to(session[:return_to_url], **options)
+          session[:return_to_url] = nil
+        else
+          super
+        end
       end
 
       # The default action for denying non-authenticated users.
